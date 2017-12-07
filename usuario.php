@@ -198,14 +198,14 @@ if (!isset($_SESSION['s_login'])) {
                         if (isset($_POST["acao"])) {
                             if ($_POST["acao"] === "editar") {
                                 foreach ($_SESSION["usuario"] as $key => $value) :
-                                    if (($_POST["login"] != $value["login"] && (intval($cadastro["codigo"]) == $value["codigo"])) === true) :
+                                    if (($_POST["login"] != $value["login"] && (intval($cadastro["codigo"]) === $value["codigo"])) == true) :
                                         $_SESSION["usuario"][$key]['nome'] = $cadastro['nome'];
                                         $_SESSION["usuario"][$key]['login'] = $cadastro['login'];
                                         $_SESSION["usuario"][$key]['senha'] = $cadastro['senha'];
 
                                         echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro Alterado.</div>';
                                     else:
-                                        echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> ERRO.</div>';
+                                        
                                     endif;
                                 endforeach;
                             }

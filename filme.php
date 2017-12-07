@@ -12,25 +12,25 @@ if (isset($_SESSION['filme'])) {
 }
 $_SESSION['filme'] = array(
     array(
-        "codigo" => "0",
+        "codigo" => "1",
         "nome" => "Filme##1",
         "produtora" => "produtora##1",
         "distribuidora" => "distribuidora##1"
     ),
     array(
-        "codigo" => "1",
+        "codigo" => "2",
         "nome" => "Filme##2",
         "produtora" => "produtora##2",
         "distribuidora" => "distribuidora##2"
     ),
     array(
-        "codigo" => "2",
+        "codigo" => "3",
         "nome" => "Filme##3",
         "produtora" => "produtora##3",
         "distribuidora" => "distribuidora##3"
     ),
     array(
-        "codigo" => "3",
+        "codigo" => "4",
         "nome" => "Filme##4",
         "produtora" => "produtora##4",
         "distribuidora" => "distribuidora##4"
@@ -96,14 +96,15 @@ in_serir:
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Código</th>
+
                                 <th>Nome do Filme</th>
                                 <th>Produtora</th>
                                 <th>Distribuidora</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>  
-                        <td><input type="int" name="codigo" value="" /></td>
+
                         <td><input type="text" name="nome" value="" /></td>
                         <td><input type="text" name="produtora" value="" /></td>
                         <td><input type="text" name="distribuidora" value="" /></td>
@@ -132,18 +133,19 @@ in_serir:
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Código</th>
+
                                 <th>Nome do Filme</th>
                                 <th>Produtora</th>
                                 <th>Distribuidora</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>  
-                        <td><input type="int" name="codigo" value="<?php
-                            if (isset($_POST["editar"])) {
-                                echo $_POST["codigo"];
-                            }
-                            ?>" /></td>
+                        <input type="hidden" name="codigo" value="<?php
+                        if (isset($_POST["editar"])) {
+                            echo $_POST["codigo"];
+                        }
+                        ?>" />
                         <td><input type="text" name="nome" value="<?php
                             if (isset($_POST["editar"])) {
                                 echo $_POST["nome"];
@@ -193,6 +195,7 @@ in_serir:
                     </thead>
                     <tbody>
                         <?php
+                        $controle = false;
                         $cadastro = filter_input_array(INPUT_POST, FILTER_DEFAULT);
                         if (!isset($_SESSION['filme'])) {
                             header('location: login.php');
@@ -200,10 +203,15 @@ in_serir:
                         }
                         if (isset($_POST["acao"])) {
                             if (!empty($_POST["acao"] === "inserir")):
-                               array_push($_SESSION['filme'], $_POST);
-                                echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro efetuado.</div>';
-                            else:
-
+                                $registro = array("codigo" => count($_SESSION["filme"]) + 1, "nome" => $cadastro["nome"], "produtora" => $cadastro["produtora"], "distribuidora" => $cadastro["distribuidora"]);
+                                foreach ($_SESSION["filme"] as $key => $value) {
+                                }
+                                if ($controle != $value["codigo"]):
+                                    array_push($_SESSION['filme'], $registro);
+                                    echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro efetuado.</div>';
+                                else:
+                                    echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Igual.</div>';
+                                endif;
                             endif;
                         }
                         if (isset($_POST["acao"])) {
@@ -212,11 +220,10 @@ in_serir:
                                 foreach ($_SESSION["filme"] as $key => $value) {
                                     if (intval($cadastro["codigo"]) != $value["codigo"]) :
                                         array_push($array, $value);
-                                        echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Excluído.</div>';
-                                    else:
                                     endif;
                                 }
                                 $_SESSION["filme"] = $array;
+                                echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Excluído.</div>';
                             }
                         }
                         if (isset($_POST["acao"])) {
