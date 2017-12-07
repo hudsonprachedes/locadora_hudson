@@ -63,7 +63,7 @@ if (!isset($_SESSION['s_login'])) {
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Código</th>
+
                                 <th>Nome</th>
                                 <th>Login</th>
                                 <th>Senha</th>
@@ -72,7 +72,7 @@ if (!isset($_SESSION['s_login'])) {
                         </thead>
                         <tbody>  
 
-                        <td><input type="int" name="codigo" placeholder="código" value="" class="form-control"/></td>
+
                         <td><input type="text" name="nome"  placeholder="Nome" value="" class="form-control" /></td>
                         <td> <input type="text" name="login" id="login" placeholder="Digite um Login" class="form-control"><br></td>
                         <td><input type="password" name="senha" id="senha" placeholder="Digite sua senha" class="form-control"><br></td>
@@ -99,7 +99,7 @@ if (!isset($_SESSION['s_login'])) {
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Código</th>
+
                                 <th>Nome</th>
                                 <th>Login</th>
                                 <th>Senha</th>
@@ -107,11 +107,11 @@ if (!isset($_SESSION['s_login'])) {
                             </tr>
                         </thead>
                         <tbody>  
-                        <td> <input type="int" name="codigo" class="form-control" value="<?php
-                            if (isset($_POST["editar"])) {
-                                echo $_POST["codigo"];
-                            }
-                            ?>"><br></td>
+                        <input type="hidden" name="codigo" class="form-control" value="<?php
+                        if (isset($_POST["editar"])) {
+                            echo $_POST["codigo"];
+                        }
+                        ?>"/>
 
                         <td> <input type="text" name="nome"  class="form-control" value="<?php
                             if (isset($_POST["editar"])) {
@@ -167,12 +167,16 @@ if (!isset($_SESSION['s_login'])) {
                             header('location: login.php');
                             die;
                         }
+                        $controle = true;
                         $cadastro = filter_input_array(INPUT_POST, FILTER_DEFAULT);
                         if (isset($_POST["acao"])) {
                             if ($_POST["acao"] === "inserir"):
-                                if ($_POST['codigo'] != $_SESSION["usuario"]):
-                                    $registro = array("codigo" => count($_SESSION["usuario"]) + 1, "nome" => $cadastro["nome"], "cpf" => $cadastro["cpf"]);
-                                    array_push($_SESSION['usuario'], $_POST);
+                                $registro = array("codigo" => count($_SESSION["usuario"]) + 1, "nome" => $cadastro["nome"], "login" => $cadastro["login"], "senha" => $cadastro["senha"]);
+                                foreach ($_SESSION["usuario"] as $key => $value) {
+                                    
+                                }
+                                if ($_POST["login"] != $value["login"]):
+                                    array_push($_SESSION['usuario'], $registro);
                                     echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro efetuado.</div>';
                                 else:
                                     echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Igual.</div>';
@@ -185,24 +189,23 @@ if (!isset($_SESSION['s_login'])) {
                                 foreach ($_SESSION["usuario"] as $key => $value) {
                                     if (intval($cadastro["codigo"]) != $value["codigo"]) :
                                         array_push($array, $value);
-                                        echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Excluído.</div>';
-                                    else:
                                     endif;
                                 }
                                 $_SESSION["usuario"] = $array;
+                                echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> Cadastro Excluído.</div>';
                             }
                         }
                         if (isset($_POST["acao"])) {
                             if ($_POST["acao"] === "editar") {
                                 foreach ($_SESSION["usuario"] as $key => $value) :
-                                    if (intval($cadastro["codigo"]) == $value["codigo"]) :
+                                    if (($_POST["login"] != $value["login"] && (intval($cadastro["codigo"]) == $value["codigo"])) === true) :
                                         $_SESSION["usuario"][$key]['nome'] = $cadastro['nome'];
                                         $_SESSION["usuario"][$key]['login'] = $cadastro['login'];
                                         $_SESSION["usuario"][$key]['senha'] = $cadastro['senha'];
 
                                         echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro Alterado.</div>';
                                     else:
-                                    //
+                                        echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> ERRO.</div>';
                                     endif;
                                 endforeach;
                             }
