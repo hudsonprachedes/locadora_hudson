@@ -16,18 +16,18 @@ $_SESSION['cliente'] = array(
     array(
         "codigo" => "1",
         "nomec" => "Hudson",
-        "cpf" => "088.375.189-51"
+        "cpf" => "45343530656"
     ),
     array(
         "codigo" => "2",
         "nomec" => "fulano",
-        "cpf" => "714.223.215-33"
+        "cpf" => "31868625745"
     ),
     array(
         "codigo" => "3",
         "nomec" => "ciclano",
-        "cpf" => "061.884.613-16"
-    )
+        "cpf" => "08837518951"
+    ),
 );
 in_serir:
 ?>
@@ -196,7 +196,7 @@ in_serir:
                     <tbody>
                         <?php
                         include("conexao.php");
-                        $controle = true;
+                        $controle = TRUE;
                         $x = 0;
                         $cadastro = filter_input_array(INPUT_POST, FILTER_DEFAULT);
                         if (!isset($_SESSION["cliente"])) {
@@ -206,28 +206,68 @@ in_serir:
                         if (isset($_POST["acao"])) {
                             if ($_POST["acao"] === "editar") {
                                 if (!empty(Check::VerificarDocumento('F', $cadastro["cpf"]))):
-                                    foreach ($_SESSION["cliente"] as $key => $value):
-                                        if (($_POST["cpf"] != $value["cpf"]) || ($_POST["nomec"] != $value["nomec"])) :
-                                        else: echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> CPF IGUAL.</div>';
-                                            $controle = false;
-                                        endif;
-                                    endforeach;
-                                    foreach ($_SESSION["cliente"] as $key => $valuee) {
-                                        if (intval($cadastro["codigo"]) == ($valor = (string) $valuee["codigo"])):
-                                        else: 
-                                            $controle = false;
-                                        endif;
-                                        if ($controle === true):
-                                            $_SESSION["cliente"][$key]["nomec"] = $cadastro["nomec"];
-                                            $_SESSION["cliente"][$key]["cpf"] = $cadastro["cpf"];
-                                            echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro efetuado.</div>';
-                                        endif;
+                                    foreach ($_SESSION["cliente"] as $key => $value) {
+                                        while ($cadastro["cpf"] === $value["cpf"]) {
+                                            $controle = FALSE; goto sair; break;
+                                        }
+                                        
+                                        while (($cadastro["cpf"] != $value["cpf"]) === TRUE) {
+                                            if (intval($cadastro["codigo"]) == $value["codigo"]):
+                                                $_SESSION["cliente"][$key]["nomec"] = $cadastro["nomec"];
+                                                $_SESSION["cliente"][$key]["cpf"] = $cadastro["cpf"];
+                                            endif;
+
+                                            break;
+                                        }
                                     }
+                                    echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Alteração efetuada.</div>';
+                                    sair:
+                                        echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> CPF IGUAL.</div>';
                                 else:
                                     echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> CPF INVÁLIDO.</div>';
                                 endif;
                             }
                         }
+
+
+                        /*
+                          // VALIDAÇÃO + ALTERAÇÃO
+                          foreach ($_SESSION["cliente"] as $key => $valuee) {
+                          $erro = array("key" => $key, "codigo" => $valuee["codigo"], "cod_erro" => '');
+                          if (($_POST["cpf"] == $valuee["cpf"])):
+                          $erro["cod_erro"] .= 1 . ", ";
+                          $controle = TRUE;
+                          else:
+                          $controle = FALSE;
+                          $erro["cod_erro"] .= 2 . ", ";
+                          endif;
+
+                          if (intval($cadastro["codigo"]) == ($valor = (string) $valuee["codigo"])):
+                          $erro["cod_erro"] .= 3 . ", ";
+                          $controle = TRUE;
+                          else:
+                          $controle = FALSE;
+                          $erro["cod_erro"] .= 4 . ", ";
+                          endif;
+                          echo "<p>KEY {$erro["key"]} | CODIGO: {$erro["codigo"]} | CODIGO ERRO: {$erro["cod_erro"]} | CONTROLE : " . var_dump($controle) . "</p>";
+                          echo '<hr>';
+                          }
+
+                          var_dump($controle);
+                          if ($controle == TRUE):
+                          echo $erro["cod_erro"] = 5;
+                          $_SESSION["cliente"][$key]["nomec"] = $cadastro["nomec"];
+                          $_SESSION["cliente"][$key]["cpf"] = $cadastro["cpf"];
+                          echo '<div class = "alert alert-success" role = "alert"><strong>SUCESSO</strong> Cadastro efetuado.</div>';
+                          endif;
+
+                          else:
+                          echo '<div class = "alert alert-warning" role = "alert"><strong>ATENÇÃO</strong> CPF INVÁLIDO.</div>';
+                          endif;
+                          }
+                          } */
+
+
                         if (isset($_POST["acao"])) {
                             if ($_POST["acao"] === "inserir") {
                                 if (!empty(Check::VerificarDocumento('F', $cadastro["cpf"]))) :
